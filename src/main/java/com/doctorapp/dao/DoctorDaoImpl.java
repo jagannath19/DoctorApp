@@ -11,7 +11,7 @@ import java.util.List;
 
 import com.doctorapp.model.Doctor;
 import com.doctorapp.util.DbConnection;
-import com.doctorapp.util.Quary;
+import com.doctorapp.util.Queries;
 
 public class DoctorDaoImpl implements IDoctorDao {
 	Connection connection;
@@ -23,9 +23,9 @@ public class DoctorDaoImpl implements IDoctorDao {
 	@Override
 	public void addDoctor(Doctor doctor) {
 		try {
-			 connection=DbConnection.getConnection();
+			 connection=DbConnection.openConnection();
 			
-			prepairedstatement=connection.prepareStatement(Quary.addDoctorQuary);
+			prepairedstatement=connection.prepareStatement(Queries.QueryAddDoctor);
 			prepairedstatement.setString(1, doctor.getDoctorName());
 //			prepairedstatement.setInt(2, doctor.getDoctorId());
 			prepairedstatement.setString(2, doctor.getSpeciality());
@@ -34,7 +34,7 @@ public class DoctorDaoImpl implements IDoctorDao {
 			prepairedstatement.setTimestamp(5,Timestamp.valueOf(doctor.getStartTime()));
 			prepairedstatement.setTimestamp(6, Timestamp.valueOf(doctor.getEndTime()));
 			boolean val=prepairedstatement.execute();
-			if(val==false) {
+			if(!val) {
 				System.out.println("Doctor added");
 			}
 			
@@ -52,12 +52,14 @@ public class DoctorDaoImpl implements IDoctorDao {
 	public void updateDoctor(int doctorId, double fees) {
 		
 		try {
-			prepairedstatement=connection.prepareStatement(Quary.updateDoctorquary);
+			prepairedstatement=connection.prepareStatement(Queries.QueryUpdateDoctor);
 			prepairedstatement.setDouble(1, fees);
 			prepairedstatement.setInt(2, doctorId);
-			boolean val=prepairedstatement.execute();
-			if(val==false)
+			int val=prepairedstatement.executeUpdate();
+			if(val==1)
 				System.out.println("Fees added");
+			else
+				System.out.println("Invalid dotor id");
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -72,8 +74,8 @@ public class DoctorDaoImpl implements IDoctorDao {
 	public Doctor findById(int doctorId) {
 		Doctor doctor=null;
 		try {
-			connection=DbConnection.getConnection();
-			prepairedstatement=connection.prepareStatement(Quary.findDoctorById);
+			connection=DbConnection.openConnection();
+			prepairedstatement=connection.prepareStatement(Queries.QueryDoctorById);
 			prepairedstatement.setInt(1, doctorId);
 			ResultSet resultset=prepairedstatement.executeQuery();
 			while(resultset.next()) {
@@ -98,9 +100,9 @@ public class DoctorDaoImpl implements IDoctorDao {
 
 	@Override
 	public void deleteDoctor(int doctorId) {
-		connection=DbConnection.getConnection();
+		connection=DbConnection.openConnection();
 		try {
-			prepairedstatement=connection.prepareStatement(Quary.deleteDoctor);
+			prepairedstatement=connection.prepareStatement(Queries.QueryDeleteDoctor);
 			prepairedstatement.setInt(1, doctorId);
 			boolean val=prepairedstatement.execute();
 			if(val==false)
@@ -117,11 +119,11 @@ public class DoctorDaoImpl implements IDoctorDao {
 
 	@Override
 	public List<Doctor> getBySpeciality(String speciality) {
-		connection=DbConnection.getConnection();
+		connection=DbConnection.openConnection();
 		Doctor doctor=null;
 		List<Doctor> doctorList=new ArrayList<Doctor>();
 		try {
-			prepairedstatement=connection.prepareStatement(Quary.getBySpecilityQuary);
+			prepairedstatement=connection.prepareStatement(Queries.QueryDoctorBySpecility);
 			prepairedstatement.setString(1, speciality);
 			ResultSet resultset=prepairedstatement.executeQuery();
 			while(resultset.next()) {
@@ -133,6 +135,7 @@ public class DoctorDaoImpl implements IDoctorDao {
 			doctor.setExperiance(resultset.getInt(5));
 			doctor.setStartTime(resultset.getTimestamp(6).toLocalDateTime());
 			doctor.setEndTime(resultset.getTimestamp(7).toLocalDateTime());
+			doctorList.add(doctor);
 			}
 			
 		} catch (SQLException e) {
@@ -147,11 +150,11 @@ public class DoctorDaoImpl implements IDoctorDao {
 	@Override
 	public List<Doctor> getBySpecialityAndExp(String speciality, int experiance) {
 		
-		connection=DbConnection.getConnection();
+		connection=DbConnection.openConnection();
 		Doctor doctor=null;
 		List<Doctor> doctorList=new ArrayList<Doctor>();
 		try {
-			prepairedstatement=connection.prepareStatement(Quary.getBySpecialityExperianceQuary);
+			prepairedstatement=connection.prepareStatement(Queries.QueryDoctorBySpecialityAndExperiance);
 			prepairedstatement.setString(1, speciality);
 			prepairedstatement.setInt(2, experiance);
 			ResultSet resultset=prepairedstatement.executeQuery();
@@ -164,6 +167,7 @@ public class DoctorDaoImpl implements IDoctorDao {
 			doctor.setExperiance(resultset.getInt(5));
 			doctor.setStartTime(resultset.getTimestamp(6).toLocalDateTime());
 			doctor.setEndTime(resultset.getTimestamp(7).toLocalDateTime());
+			doctorList.add(doctor);
 			}
 			
 		} catch (SQLException e) {
@@ -176,11 +180,11 @@ public class DoctorDaoImpl implements IDoctorDao {
 
 	@Override
 	public List<Doctor> getBySpecialityAndFees(String speciality, double fees) {
-		connection=DbConnection.getConnection();
+		connection=DbConnection.openConnection();
 		Doctor doctor=null;
 		List<Doctor> doctorList=new ArrayList<Doctor>();
 		try {
-			prepairedstatement=connection.prepareStatement(Quary.getBySpecialityFeesQuary);
+			prepairedstatement=connection.prepareStatement(Queries.QueryDoctorBySpecialityFees);
 			prepairedstatement.setString(1, speciality);
 			prepairedstatement.setDouble(2, fees);
 			ResultSet resultset=prepairedstatement.executeQuery();
@@ -193,6 +197,7 @@ public class DoctorDaoImpl implements IDoctorDao {
 			doctor.setExperiance(resultset.getInt(5));
 			doctor.setStartTime(resultset.getTimestamp(6).toLocalDateTime());
 			doctor.setEndTime(resultset.getTimestamp(7).toLocalDateTime());
+			doctorList.add(doctor);
 			}
 			
 		} catch (SQLException e) {
@@ -205,12 +210,12 @@ public class DoctorDaoImpl implements IDoctorDao {
 
 	@Override
 	public List<Doctor> getByAvailability(LocalDateTime startTime) {
-		connection=DbConnection.getConnection();
+		connection=DbConnection.openConnection();
 		Doctor doctor=null;
 		Timestamp timeStamp=Timestamp.valueOf(startTime);
 		List<Doctor> doctorList=new ArrayList<Doctor>();
 		try {
-			prepairedstatement=connection.prepareStatement(Quary.getByAvailabilityQuary);
+			prepairedstatement=connection.prepareStatement(Queries.QueryDoctorByAvailability);
 			prepairedstatement.setTimestamp(1, timeStamp);
 			ResultSet resultset=prepairedstatement.executeQuery();
 			while(resultset.next()) {
@@ -222,11 +227,20 @@ public class DoctorDaoImpl implements IDoctorDao {
 			doctor.setExperiance(resultset.getInt(5));
 			doctor.setStartTime(resultset.getTimestamp(6).toLocalDateTime());
 			doctor.setEndTime(resultset.getTimestamp(7).toLocalDateTime());
+			doctorList.add(doctor);
+			
 			}
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
+			try {
+				if(prepairedstatement!=null)
+					prepairedstatement.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			DbConnection.closeConnection();
 		}
 		return doctorList;

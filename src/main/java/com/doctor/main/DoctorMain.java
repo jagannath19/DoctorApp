@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.util.Scanner;
 
 import com.doctorapp.model.Doctor;
+import com.doctorapp.model.Specialisation;
 import com.doctorapp.service.DoctorServiceImpl;
 import com.doctorapp.service.IDoctorService;
 
@@ -32,8 +33,14 @@ public class DoctorMain {
 				scn.nextLine();
 				String doctorName=scn.nextLine();
 				
-				System.out.println("Enter the doctor Speciality");
-				String speciality=scn.nextLine();
+				System.out.println("Specialisation - \n1-ORTHOPEADICIAN \n2-PEDIATRICIAN\n3-DIABETICIAN\n"
+						+ "4-CARDIOLOGIST \n5-GENERAL PHYSICIAN");
+					int specInput=scn.nextInt();
+					scn.nextLine();
+					String speciality=Specialisation.values()[specInput-1].toString();
+					System.out.println(speciality);
+
+					
 				System.out.println("Enter the fees");
 				double fees=scn.nextDouble();
 				System.out.println("enter the experiance");
@@ -75,6 +82,7 @@ public class DoctorMain {
 				default:
 					System.out.println("Invalid input");
 			}
+			break;
 		case 2:
 			System.out.println("press 1 for get doctor by speciality");
 			System.out.println("press 2 for get doctor by speciality and Experiance");
@@ -83,27 +91,40 @@ public class DoctorMain {
 			int customerChoice=scn.nextInt();
 			switch(customerChoice) {
 			case 1:
-				System.out.println("Enter the speciality");
-				scn.nextInt();
-				String speciality=scn.nextLine();
-				System.out.println(doctorService.getBySpeciality(speciality));
+				System.out.println("Specialisation - \n1-ORTHOPEADICIAN \n2-PEDIATRICIAN\n3-DIABETICIAN\n"
+						+ "4-CARDIOLOGIST \n5-GENERAL PHYSICIAN");
+					int specInput=scn.nextInt();
+					scn.nextLine();
+					String speciality=Specialisation.values()[specInput-1].toString();
+					for(Doctor doctor:doctorService.getBySpeciality(speciality)) {
+						System.out.println(doctor);
+					}
 				break;
 			case 2:
-				System.out.println("Enter the Speciality");
-				String specialityExperiance=scn.nextLine();
+				System.out.println("Specialisation - \n1-ORTHOPEADICIAN \n2-PEDIATRICIAN\n3-DIABETICIAN\n"
+						+ "4-CARDIOLOGIST \n5-GENERAL PHYSICIAN");
+					 specInput=scn.nextInt();
+					scn.nextLine();
+					 speciality=Specialisation.values()[specInput-1].toString();
 				System.out.println("Enter the Experiance");
-				int experianceSpeciality=scn.nextInt();
+				int experianceInput=scn.nextInt();
 				
-				System.out.println(doctorService.getBySpecialityAndExp(specialityExperiance, experianceSpeciality));
+				for(Doctor doctor:doctorService.getBySpecialityAndExp(speciality, experianceInput)) {
+					System.out.println(doctor);
+				}
 				break;
 			case 3:
-				System.out.println("Enter the speciality");
-				scn.nextLine();
-				String specialityFees=scn.nextLine();
-				System.out.println("Enter fees");
-				double feesSpeciality=scn.nextDouble();
+				System.out.println("Specialisation - \n1-ORTHOPEADICIAN \n2-PEDIATRICIAN\n3-DIABETICIAN\n"
+						+ "4-CARDIOLOGIST \n5-GENERAL PHYSICIAN");
+					 specInput=scn.nextInt();
+					scn.nextLine();
+					speciality=Specialisation.values()[specInput-1].toString();
 				
-				System.out.println(doctorService.getBySpecialityAndFees(specialityFees, feesSpeciality));
+				System.out.println("Enter fees");
+				double feesInput=scn.nextDouble();
+				for(Doctor doctor:doctorService.getBySpecialityAndFees(speciality, feesInput)) {
+					System.out.println(doctor);
+				}
 				break;
 			case 4:
 				System.out.println("Enter the date in form of yyyy-mm-dd");
@@ -115,17 +136,20 @@ public class DoctorMain {
 				
 				LocalDateTime dateTime=LocalDateTime.of(localDate, localTime);
 				
-				System.out.println(doctorService.getByAvailability(dateTime));
+				for(Doctor doctor:doctorService.getByAvailability(dateTime)) {
+					System.out.println(doctor);
+				}
 				break;
 				default:
 					System.out.println("Invalid Input");}
-			System.out.println("press 1 for continue \npress 2 for exit");
-			int ch=scn.nextInt();
-			if(ch==1)
-				flag=true;
-			else
-				flag=false;
+			
 			}
+		System.out.println("press 1 for continue \npress 2 for exit");
+		int ch=scn.nextInt();
+		if(ch==1)
+			flag=true;
+		else
+			flag=false;
 		}
 			while(flag);
 			System.out.println("Thank you for visit us");

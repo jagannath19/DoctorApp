@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class DbConnection {
 	static Connection connection;
-	public static Connection getConnection() {
+	public static Connection openConnection() {
 		String url="jdbc:mysql://localhost:3306/dbtraining";
 		String username="root";
 		String password="root";
